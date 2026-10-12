@@ -1,26 +1,76 @@
 
-import React from "react";
-import './styles/App.css'
+import React, { useState } from "react";
+import "./styles/App.css";
 import QuizCard from "./components/QuizCard";
+import questions from "./data/questions";
 
-import { useState } from "react";
-function App(){
- const [score,setScore]=useState(0)
-const questionData = {
-    questionNumber: 1,
-    question: "Which language is primarily used to build interactive web pages?",
-    options: ["Python", "JavaScript", "C++", "Java"],
-    correctAnswer: "JavaScript"
-};
+function App() {
+    const [score, setScore] = useState(0);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [answered, setAnswered] = useState(false);
+    const [isFinished, setIsFinished] = useState(false);
 
-return(
-    <div className="main_container">
-        <QuizCard questionNumber={questionData.questionNumber} question={questionData.question} options={questionData.options} correctAnswer={questionData.correctAnswer}/>
-    </div>
-)
+    const currentQuestion = questions[currentQuestionIndex];
 
+    const handleAnswer = (isCorrect) => {
+        if (answered) return;
 
+        if (isCorrect) {
+            setScore((prevScore) => prevScore + 1);
+        }
 
+        setAnswered(true);
+    };
+
+    const handleNext = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+            setAnswered(false);
+        } else {
+            setIsFinished(true);
+        }
+    };
+
+    if (isFinished) {
+        return (
+            <div className="main_container">
+                <h2>Quiz Completed!</h2>
+                <h3>
+                    Score: {score} / {questions.length}
+                </h3>
+                <button onClick={() => window.location.reload()}>
+                    Restart Quiz
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="main_container">
+            <h2 className="score">
+                Score: {score}
+            </h2>
+
+            <QuizCard
+                key={currentQuestionIndex}
+                questionNumber={currentQuestion.questionNumber}
+                question={currentQuestion.question}
+                options={currentQuestion.options}
+                correctAnswer={currentQuestion.correctAnswer}
+                onAnswer={handleAnswer}
+            />
+
+            <button
+                className="next"
+                onClick={handleNext}
+                disabled={!answered}
+            >
+                {currentQuestionIndex < questions.length - 1
+                    ? "Next"
+                    : "Submit"}
+            </button>
+        </div>
+    );
 }
 
 export default App;

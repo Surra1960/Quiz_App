@@ -4,7 +4,7 @@ import React from 'react';
 import '../styles/QuizCard.css'
 import { useState } from 'react';
 
-function QuizCard({questionNumber, question, options, correctAnswer}){
+function QuizCard({questionNumber, question, options, correctAnswer,onAnswer}){
 
     const [selectedOption, setSelectedOption] = useState(null);
     
@@ -13,6 +13,7 @@ function QuizCard({questionNumber, question, options, correctAnswer}){
     const handleOptionClick =(option)=>{
             if(!selectedOption){
                 setSelectedOption(option);
+                onAnswer(option===correctAnswer);
             }
     }
         
@@ -30,19 +31,10 @@ function QuizCard({questionNumber, question, options, correctAnswer}){
                         onClick={()=>handleOptionClick(option)}
                         className={
                             !selectedOption?'option':option===correctAnswer?'correct':option===selectedOption?'incorrect':'option'
-                        }>{option}</button>
+                        }>{option}{selectedOption&&((option===correctAnswer)?("✔ correct"):(option===selectedOption)?("❌InCorrect"):"")}</button>
                     )
                 })
             }
-             {selectedOption && (
-                <div className='result'>
-                    {selectedOption === correctAnswer ? (
-                        <p className='correct'>Correct!</p>
-                    ) : (
-                        <p className='incorrect'>Incorrect!</p>
-                    )}
-                </div>
-            )}
          </div>
     )
         
